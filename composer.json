@@ -1,0 +1,25 @@
+{
+    "name": "reachweb/locale-lander",
+    "autoload": {
+        "psr-4": {
+            "Reach\\LocaleLander\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Locale Lander",
+            "description": "Land your users at the right site based on their locale!"
+        },
+        "laravel": {
+            "providers": [
+                "Reach\\LocaleLander\\ServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13"
+    },
+    "require": {
+        "symfony/intl": "^7.0"
+    }
+}
