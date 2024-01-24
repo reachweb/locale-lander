@@ -10,7 +10,15 @@ Install using composer:
 composer require reachweb/locale-lander
 ```
 
-By default, the addon is disabled to prevent any unintended breakage. Enable it in the configuration file located at config/statamic/locale-lander.php:
+By default, the addon is disabled to prevent any unintended breakage. 
+
+To enable it, publish the config file:
+
+``` bash
+php artisan vendor:publish --tag locale-lander-config
+```
+
+and set enable to `true`:
 
 ```php
 return [
