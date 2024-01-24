@@ -20,6 +20,7 @@
         "laravel/pint": "^1.13"
     },
     "require": {
+        "statamic/cms": "^4.0.0",
         "symfony/intl": "^7.0"
     }
 }
