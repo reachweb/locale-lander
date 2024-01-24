@@ -12,4 +12,13 @@ class ServiceProvider extends AddonServiceProvider
             HandleLocaleRedirection::class,
         ],
     ];
+
+    public function bootAddon()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/locale-lander.php', 'statamic.locale-lander');
+
+        $this->publishes([
+            __DIR__.'/../config/locale-lander.php' => config_path('statamic/locale-lander.php'),
+        ], 'locale-lander');
+    }
 }

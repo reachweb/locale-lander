@@ -13,7 +13,6 @@ class HandleLocaleRedirection
 {
     public function handle(Request $request, Closure $next)
     {
-        ray(session()->get('locale_lander'));
         // Skip if disabled
         if (config('locale-lander.enable') === false) {
             return $next($request);
@@ -29,6 +28,8 @@ class HandleLocaleRedirection
 
         // Skip if we are currently on the correct locale
         if (Site::current()->locale() === $browserLocale) {
+            $this->setRedirected();
+
             return $next($request);
         }
 
@@ -45,7 +46,7 @@ class HandleLocaleRedirection
         if ($data = Data::findByRequestUrl($request->url())) {
             if ($entry = Entry::find($data->id())) {
                 if ($redirectTo = $entry->in($site->handle())) {
-                    session(['locale_lander' => 'redirected']);
+                    $this->setRedirected();
 
                     return redirect($redirectTo->url());
                 }
@@ -53,5 +54,10 @@ class HandleLocaleRedirection
         }
 
         return $next($request);
+    }
+
+    public function setRedirected()
+    {
+        session(['locale_lander' => 'redirected']);
     }
 }
