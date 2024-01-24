@@ -14,7 +14,7 @@ class HandleLocaleRedirection
     public function handle(Request $request, Closure $next)
     {
         // Skip if disabled
-        if (config('locale-lander.enable') === false) {
+        if (config('statamic.locale-lander.enable') === false) {
             return $next($request);
         }
 
