@@ -11,7 +11,7 @@ class ServiceProvider extends AddonServiceProvider
     public function bootAddon()
     {
         $router = $this->app->make(Router::class);
-        $router->prependMiddlewareToGroup('statamic.web', HandleLocaleRedirection::class);
-        $router->prependMiddlewareToGroup('web', HandleLocaleRedirection::class);
+        $router->pushMiddlewareToGroup('statamic.web', HandleLocaleRedirection::class);
+        // $router->prependMiddlewareToGroup('web', HandleLocaleRedirection::class);
     }
 }

@@ -4,20 +4,48 @@ namespace Reach\LocaleLander\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\Intl\Locales;
-use Symfony\Component\Intl\Languages;
+use Statamic\Facades\Entry;
+use Statamic\Facades\Site;
+use Symfony\Component\Intl\Locale;
 
 class HandleLocaleRedirection
 {
     public function handle(Request $request, Closure $next)
     {
+        // Skip if disabled
         if (config('locale-lander.enable') === false) {
             return $next($request);
         }
-        
-        $browserLanguage = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
 
-        ray(Languages::getName($browserLanguage));
+        $browserLocale = locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+
+        // Skip if we are currently on the correct locale
+        if (Site::current()->locale() ===  $browserLocale) {
+            return $next($request);
+        }
+        $path = $request->path() === '/' ? '' : $request->path();
+        // Find the page or skip if we are unable  FIX HERE ONLY WORKS FOR DEFAULT
+        if (! $page = Entry::findByUri('/'.$path)) {
+            return $next($request);
+        }
+
+        // Find the entry or skip if we are unable to
+        // if (! $entry = Entry::find($page->reference())) {
+        //     return $next($request);
+        // }
+
+
+        $locales = collect(config('statamic.sites')['sites'])
+            ->map(function ($site) {
+                if (isset ($site['lang'])) {
+                    return $site['lang'];
+                }
+                return Locale::getPrimaryLanguage($site['locale']);
+            })->values();
+
+
+        dd(Site::current(), $locales, $browserLocale);
+
 
         // if (config('locale-lander.enable')) {
         //     $locales = config('statamic.sites')
