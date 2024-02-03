@@ -11,53 +11,70 @@ use Symfony\Component\Intl\Locale;
 
 class HandleLocaleRedirection
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
-        // Skip if disabled
-        if (config('locale-lander.enable') === false) {
-            return $next($request);
-        }
-
-        // Skip if we have already been redirected once at this session
-        if (session('locale_lander') === 'redirected') {
+        if ($this->shouldSkip()) {
             return $next($request);
         }
 
         $browserLocale = locale_accept_from_http($request->header('Accept-Language'));
         $browserLanguage = Locale::getPrimaryLanguage($browserLocale);
 
-        // Skip if we are currently on the correct locale
-        if (Site::current()->locale() === $browserLocale) {
-            $this->setRedirected();
+        if ($this->isCurrentLocaleCorrect($browserLocale)) {
+            $this->setCompleted();
 
             return $next($request);
         }
 
-        // Set the session to redirect if the locale is in the sites config
-        $site = Site::all()->first(function ($site) use ($browserLocale, $browserLanguage) {
-            return $site->locale() === $browserLocale || $site->lang() === $browserLanguage;
-        });
-
-        // Skip if there is no site for the browser locale
+        $site = $this->getMatchingSite($browserLocale, $browserLanguage);
         if (! $site) {
             return $next($request);
         }
 
+        return $this->handleLocaleContent($request, $site) ?: $next($request);
+    }
+
+    private function shouldSkip(): bool
+    {
+        return config('locale-lander.enable') === false || session('locale_lander') === 'completed';
+    }
+
+    private function isCurrentLocaleCorrect($browserLocale): bool
+    {
+        return Site::current()->locale() === $browserLocale;
+    }
+
+    private function getMatchingSite($browserLocale, $browserLanguage): ?\Statamic\Sites\Site
+    {
+        return Site::all()->first(function ($site) use ($browserLocale, $browserLanguage) {
+            return $site->locale() === $browserLocale || $site->lang() === $browserLanguage;
+        });
+    }
+
+    private function handleLocaleContent(Request $request, $site): void
+    {
         if ($data = Data::findByRequestUrl($request->url())) {
             if ($entry = Entry::find($data->id())) {
-                if ($redirectTo = $entry->in($site->handle())) {
-                    $this->setRedirected();
+                if ($content = $entry->in($site->handle())) {
+                    if (config('locale-lander.type') === 'redirect') {
+                        $this->setCompleted();
 
-                    return redirect($redirectTo->url());
+                        return redirect($content->url());
+                    } elseif (config('locale-lander.type') === 'popup') {
+                        $this->setPopup();
+                    }
                 }
             }
         }
-
-        return $next($request);
     }
 
-    public function setRedirected()
+    public function setCompleted(): void
     {
-        session(['locale_lander' => 'redirected']);
+        session(['locale_lander' => 'completed']);
+    }
+
+    public function setPopup(): void
+    {
+        session(['locale_lander' => 'popup']);
     }
 }

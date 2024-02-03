@@ -2,4 +2,6 @@
 
 return [
     'enable' => false,
+
+    'type' => 'redirect',
 ];
