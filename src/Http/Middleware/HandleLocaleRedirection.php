@@ -36,7 +36,7 @@ class HandleLocaleRedirection
 
     private function shouldSkip(): bool
     {
-        return config('locale-lander.enable') === false || session('locale_lander') === 'completed';
+        return config('locale-lander.enable_redirection') === false || session('locale_lander') === 'completed';
     }
 
     private function isCurrentLocaleCorrect($browserLocale): bool
@@ -51,7 +51,7 @@ class HandleLocaleRedirection
         });
     }
 
-    private function handleLocaleContent(Request $request, $site): mixed
+    private function handleLocaleContent(Request $request, $site)
     {
         if ($data = Data::findByRequestUrl($request->url())) {
             if ($entry = Entry::find($data->id())) {

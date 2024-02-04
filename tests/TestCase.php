@@ -36,6 +36,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             \Statamic\Providers\StatamicServiceProvider::class,
             \Reach\LocaleLander\ServiceProvider::class,
             \Spatie\LaravelRay\RayServiceProvider::class,
+            \Wilderborn\Partyline\ServiceProvider::class,
         ];
     }
 

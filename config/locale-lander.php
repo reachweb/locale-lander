@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'enable' => false,
+    'enable_redirection' => true,
 
     'type' => 'redirect',
 ];
