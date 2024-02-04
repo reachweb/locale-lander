@@ -51,7 +51,7 @@ class HandleLocaleRedirection
         });
     }
 
-    private function handleLocaleContent(Request $request, $site): void
+    private function handleLocaleContent(Request $request, $site): mixed
     {
         if ($data = Data::findByRequestUrl($request->url())) {
             if ($entry = Entry::find($data->id())) {

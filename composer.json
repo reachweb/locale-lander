@@ -5,6 +5,11 @@
             "Reach\\LocaleLander\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Reach\\LocaleLander\\Tests\\": "tests"
+        }
+    },
     "extra": {
         "statamic": {
             "name": "Locale Lander",
@@ -17,11 +22,18 @@
         }
     },
     "require-dev": {
-        "laravel/pint": "^1.13"
+        "laravel/pint": "^1.13",
+        "orchestra/testbench": "^8.19",
+        "phpunit/phpunit": "^10.5"
     },
     "require": {
         "php": "^8.1 || ^8.2",
         "statamic/cms": "^4.0.0",
         "symfony/intl": "^6.4 || ^7.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
     }
 }
