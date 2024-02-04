@@ -4,10 +4,9 @@ namespace Reach\LocaleLander\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Reach\LocaleLander\Facades\LocaleHelper;
 use Statamic\Facades\Data;
 use Statamic\Facades\Entry;
-use Statamic\Facades\Site;
-use Symfony\Component\Intl\Locale;
 
 class HandleLocaleRedirection
 {
@@ -17,16 +16,15 @@ class HandleLocaleRedirection
             return $next($request);
         }
 
-        $browserLocale = locale_accept_from_http($request->header('Accept-Language'));
-        $browserLanguage = Locale::getPrimaryLanguage($browserLocale);
+        $helper = LocaleHelper::boot($request);
 
-        if ($this->isCurrentLocaleCorrect($browserLocale)) {
+        if ($helper->isCurrentLocaleCorrect()) {
             $this->setCompleted();
 
             return $next($request);
         }
 
-        $site = $this->getMatchingSite($browserLocale, $browserLanguage);
+        $site = $helper->getMatchingSite();
         if (! $site) {
             return $next($request);
         }
@@ -39,18 +37,6 @@ class HandleLocaleRedirection
         return config('locale-lander.enable_redirection') === false || session('locale_lander') === 'completed';
     }
 
-    private function isCurrentLocaleCorrect($browserLocale): bool
-    {
-        return Site::current()->locale() === $browserLocale;
-    }
-
-    private function getMatchingSite($browserLocale, $browserLanguage): ?\Statamic\Sites\Site
-    {
-        return Site::all()->first(function ($site) use ($browserLocale, $browserLanguage) {
-            return $site->locale() === $browserLocale || $site->lang() === $browserLanguage;
-        });
-    }
-
     private function handleLocaleContent(Request $request, $site)
     {
         if ($data = Data::findByRequestUrl($request->url())) {
@@ -60,8 +46,6 @@ class HandleLocaleRedirection
                         $this->setCompleted();
 
                         return redirect($content->url());
-                    } elseif (config('locale-lander.type') === 'popup') {
-                        $this->setPopup();
                     }
                 }
             }
@@ -71,10 +55,5 @@ class HandleLocaleRedirection
     public function setCompleted(): void
     {
         session(['locale_lander' => 'completed']);
-    }
-
-    public function setPopup(): void
-    {
-        session(['locale_lander' => 'popup']);
     }
 }
