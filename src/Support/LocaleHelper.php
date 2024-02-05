@@ -2,6 +2,8 @@
 
 namespace Reach\LocaleLander\Support;
 
+use Statamic\Facades\Data;
+use Statamic\Facades\Entry;
 use Statamic\Facades\Site;
 use Symfony\Component\Intl\Locale;
 
@@ -45,6 +47,19 @@ class LocaleHelper
         });
     }
 
+    public function findContentInLocale($request, $site)
+    {
+        if ($data = Data::findByRequestUrl($request->url())) {
+            if ($entry = Entry::find($data->id())) {
+                if ($content = $entry->in($site->handle())) {
+                    return $content;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function browserLocale()
     {
         return $this->browserLocale;
@@ -53,5 +68,10 @@ class LocaleHelper
     public function browserLanguage()
     {
         return $this->browserLanguage;
+    }
+
+    public function setCompleted(): void
+    {
+        session(['locale_lander' => 'completed']);
     }
 }

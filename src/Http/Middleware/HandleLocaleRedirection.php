@@ -5,8 +5,6 @@ namespace Reach\LocaleLander\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Reach\LocaleLander\Facades\LocaleHelper;
-use Statamic\Facades\Data;
-use Statamic\Facades\Entry;
 
 class HandleLocaleRedirection
 {
@@ -19,7 +17,7 @@ class HandleLocaleRedirection
         $helper = LocaleHelper::boot($request);
 
         if ($helper->isCurrentLocaleCorrect()) {
-            $this->setCompleted();
+            $helper->setCompleted();
 
             return $next($request);
         }
@@ -29,31 +27,18 @@ class HandleLocaleRedirection
             return $next($request);
         }
 
-        return $this->handleLocaleContent($request, $site) ?: $next($request);
+        $content = $helper->findContentInLocale($request, $site);
+        if ($content) {
+            $helper->setCompleted();
+
+            return redirect($content->url());
+        }
+
+        return $next($request);
     }
 
     private function shouldSkip(): bool
     {
         return config('locale-lander.enable_redirection') === false || session('locale_lander') === 'completed';
-    }
-
-    private function handleLocaleContent(Request $request, $site)
-    {
-        if ($data = Data::findByRequestUrl($request->url())) {
-            if ($entry = Entry::find($data->id())) {
-                if ($content = $entry->in($site->handle())) {
-                    if (config('locale-lander.type') === 'redirect') {
-                        $this->setCompleted();
-
-                        return redirect($content->url());
-                    }
-                }
-            }
-        }
-    }
-
-    public function setCompleted(): void
-    {
-        session(['locale_lander' => 'completed']);
     }
 }
