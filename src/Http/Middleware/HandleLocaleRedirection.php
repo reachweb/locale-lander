@@ -27,7 +27,7 @@ class HandleLocaleRedirection
             return $next($request);
         }
 
-        $content = $helper->findContentInLocale($request, $site);
+        $content = $helper->findContentInLocale($site);
         if ($content) {
             $helper->setCompleted();
 

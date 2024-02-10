@@ -9,21 +9,25 @@ use Symfony\Component\Intl\Locale;
 
 class LocaleHelper
 {
+    protected $request;
+
     protected $browserLocale;
 
     protected $browserLanguage;
 
     public function boot($request)
     {
+        $this->request = $request;
+
         $this->setBrowserLocaleFromRequest($request)
             ->setBrowserLanguage();
 
         return $this;
     }
 
-    public function setBrowserLocaleFromRequest($request): self
+    public function setBrowserLocaleFromRequest(): self
     {
-        $this->browserLocale = locale_accept_from_http($request->header('Accept-Language'));
+        $this->browserLocale = locale_accept_from_http($this->request->header('Accept-Language'));
 
         return $this;
     }
@@ -47,9 +51,9 @@ class LocaleHelper
         });
     }
 
-    public function findContentInLocale($request, $site)
+    public function findContentInLocale($site)
     {
-        if ($data = Data::findByRequestUrl($request->url())) {
+        if ($data = Data::findByRequestUrl($this->request->url())) {
             if ($entry = Entry::find($data->id())) {
                 if ($content = $entry->in($site->handle())) {
                     return $content;
