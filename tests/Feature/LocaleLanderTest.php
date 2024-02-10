@@ -1,7 +1,7 @@
 <?php
 
-use Facades\Reach\LocaleLander\Tests\Factories\EntryFactory;
 use Illuminate\Support\Facades\Config;
+use Reach\LocaleLander\Tests\CreatesEntries;
 use Reach\LocaleLander\Tests\FakesViews;
 use Reach\LocaleLander\Tests\PreventSavingStacheItemsToDisk;
 use Reach\LocaleLander\Tests\TestCase;
@@ -9,7 +9,7 @@ use Statamic\Facades;
 
 class LocaleLanderTest extends TestCase
 {
-    use FakesViews, PreventSavingStacheItemsToDisk;
+    use CreatesEntries, FakesViews, PreventSavingStacheItemsToDisk;
 
     public $collection;
 
@@ -26,59 +26,6 @@ class LocaleLanderTest extends TestCase
                 'max_depth' => 1,
             ])
             ->save();
-    }
-
-    protected function makeEntry($site, $collection, $slug)
-    {
-        return EntryFactory::id($slug)->locale($site)->collection($collection)->slug($slug)->make();
-    }
-
-    public function createMultisiteEntries()
-    {
-        $home = $this->makeEntry('en', $this->collection, 'home')->set('content', 'Home');
-        $homeFr = $home->makeLocalization('fr')->set('content', 'Accueil');
-        $homeGr = $home->makeLocalization('gr')->set('content', 'Αρχική');
-        $homeDe = $home->makeLocalization('de')->set('content', 'Startseite');
-
-        $home->save();
-        $homeFr->save();
-        $homeGr->save();
-        $homeDe->save();
-
-        $about = $this->makeEntry('en', $this->collection, 'about')->set('content', 'About');
-        $aboutFr = $about->makeLocalization('fr')->slug('a-props')->set('content', 'À propos');
-        $aboutGr = $about->makeLocalization('gr')->slug('sxetika')->set('content', 'Σχετικά');
-
-        $about->save();
-        $aboutFr->save();
-        $aboutGr->save();
-
-        $this->collection->structure()->in('en')->tree(
-            [
-                ['entry' => 'home'],
-                ['entry' => 'about'],
-            ]
-        )->save();
-
-        $this->collection->structure()->in('fr')->tree(
-            [
-                ['entry' => $homeFr->id()],
-                ['entry' => $aboutFr->id()],
-            ]
-        )->save();
-
-        $this->collection->structure()->in('gr')->tree(
-            [
-                ['entry' => $homeGr->id()],
-                ['entry' => $aboutGr->id()],
-            ]
-        )->save();
-
-        $this->collection->structure()->in('de')->tree(
-            [
-                ['entry' => $homeDe->id()],
-            ]
-        )->save();
     }
 
     /** @test */
