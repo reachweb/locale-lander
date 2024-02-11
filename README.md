@@ -1,39 +1,63 @@
+
 # Locale Lander
 
-Locale Lander is a simple addon for Statamic, particularly useful for multi-site setups involving multiple languages. It redirects users to the default language of their browser during their first visit.
+Locale Lander is a simple addon for Statamic, particularly useful for multi-site setups involving multiple languages. It redirects users to the **default language of their browser** during their first visit or displays a banner informing the user that the content is available in their native language.
 
 ## How to Install
 
 Install using composer:
 
-``` bash
+```bash
 composer require reachweb/locale-lander
 ```
 
-By default, the addon is disabled to prevent any unintended breakage. 
+## How to Use (Redirection)
 
-To enable it, publish the config file:
+To use the redirection feature, no additional configuration is needed after installation. The addon should function right out of the box.
 
-``` bash
-php artisan vendor:publish --tag locale-lander-config
+## How to Use (Banner)
+
+To use the banner feature, Locale Lander provides a tag called, you guessed it, `locale-lander`.
+
+First, you must disable automatic redirection. Publish the config file:
+
+```bash
+php artisan vendor:publish --tag=locale-lander-config
 ```
 
-and set enable to `true`:
+and in `config/locale-lander.php` disable redirection:
 
 ```php
-return [
-    'enable' => true,
-];
+'enable_redirection' => false,
 ```
-Once enabled, you are all set.
 
-## How to Use
+Then, you can use the tag by adding the necessary code to a file that loads on all pages of your website, usually `layout.antlers.html`.
 
-Typically, no additional configuration is needed after installation. The addon should function right out of the box.
+```
+{{ locale_banner }}
+    {{ if entry }}
+        {{ partial src="vendor/locale-lander/banner" }}
+    {{ /if }}
+{{ /locale_banner }}
+```
+
+The tag will return an `array` that always contains an 'entry' key. If the Entry is unavailable in this locale, `entry` will be false. Otherwise, it will contain the `title` and the `url` of the entry. A `site` key is also provided with information about the user's locale site.
+
+As you might have guessed, the addon contains an example banner template, styled with *Tailwind CSS*, that works out of the box.
+
+Publish the template:
+
+```bash
+php artisan vendor:publish --tag=locale-lander-views
+```
+
+and you should be good to go. If you are not using Tailwind CSS, you will need to style it yourself.
+
+In case you want to implement your own version, note that you should set a cookie named `locale_banner_closed` to prevent showing the banner to users who have closed it.
 
 ## How it Works
 
-This addon is actually a single middleware. Here's the process:
+This addon automatically applies a middleware in the `statamic.web` middleware group. Here's the process:
 
 - It checks the user's **browser language** and the **sites** defined in `statamic/sites.php`.
 - If the current site's locale **differs** from the user's browser, it verifies if a site for that locale exists.
@@ -43,4 +67,4 @@ This addon is actually a single middleware. Here's the process:
 ## Common Issues
 
 - The addon functions with URLs resolving to an `Entry`. It won't work if the first page a user visits isn't an Entry. (Future improvements are planned for this issue.)
-- If the site's default locale matches the user's, or if the user initially visits the site in their locale but chooses to visit a different one, they will be redirected back to their original locale once. I am currently working to resolve this issue, but it may require modifications to the language switcher.
+- If the site's default locale matches the user's, or if the user initially visits the site in their locale but chooses to visit a different one, they will be redirected back to their original locale **once**. I am currently working to resolve this issue, but it may require modifications to the language switcher.
