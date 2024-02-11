@@ -1,4 +1,4 @@
-![locale_lander_bg](https://github.com/reachweb/locale-lander/assets/7423993/54aa2783-83d0-458e-a004-5660da3a4490)
+![locale_lander_bg](https://github.com/reachweb/locale-lander/assets/7423993/54b3f81a-8341-4182-94bb-85e60e149ad5)
 
 # Locale Lander
 
