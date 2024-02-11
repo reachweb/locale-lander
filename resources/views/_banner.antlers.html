@@ -1,26 +1,27 @@
-<div id="sticky-banner" tabindex="-1"
-    class="fixed top-0 start-0 z-50 flex justify-between w-full p-4 border-b border-gray-200 bg-gray-50">
+<div id="locale-lander-banner" tabindex="-1"
+    class="fixed top-0 start-0 z-50 flex justify-between w-full p-4 lg:p-6 border-b border-gray-200 bg-gray-50 transition-transform duration-300">
     <div class="flex items-center mx-auto">
         <p class="flex items-center text-sm font-normal text-gray-500">
             <span
-                class="inline-flex p-1 me-3 bg-gray-200 rounded-full w-6 h-6 items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                    class="w-6 h-6">
+                class="inline-flex p-2 me-3 bg-gray-200 rounded-full w-8 h-8 items-center justify-center flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
                 </svg>
                 <span class="sr-only">Flag</span>
             </span>
-            <span>This page is also available in 
-                <a href="{{ url }}" title="Page in {{site:name }}">
+            <span class="lg:text-lg">This page is also available in
+                <a href="{{ entry:url }}" title="Page in {{site:name }}"
+                    class="inline font-medium text-blue-600 underline underline-offset-2 decoration-600 decoration-solid hover:no-underline">
                     {{ site:name }}
-                </a>
+                </a>.
             </span>
         </p>
     </div>
     <div class="flex items-center">
-        <button data-dismiss-target="#sticky-banner" type="button"
-            class="flex-shrink-0 inline-flex justify-center w-7 h-7 items-center text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 dark:hover:bg-gray-600 dark:hover:text-white">
+        <button data-locale-banner-close="#locale-lander-banner" type="button"
+            class="flex-shrink-0 inline-flex justify-center w-7 h-7 items-center text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -29,3 +30,22 @@
         </button>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('[data-locale-banner-close]').addEventListener('click', function () {
+            var targetId = this.getAttribute('data-locale-banner-close');
+            var targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.classList.add('-translate-y-full');
+
+                setTimeout(function () {
+                    targetElement.style.display = 'none';
+                }, 500);
+
+                document.cookie = "locale_banner_closed=true; path=/; SameSite=Lax";
+            }
+        });
+    });
+</script>
