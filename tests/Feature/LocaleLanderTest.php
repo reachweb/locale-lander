@@ -109,6 +109,25 @@ class LocaleLanderTest extends TestCase
     }
 
     /** @test */
+    public function it_does_not_redirect_if_content_unpublished()
+    {
+        $this->withoutExceptionHandling();
+        $this->withStandardFakeViews();
+
+        $this->createMultisiteEntries();
+
+        Facades\Entry::find('home')->in('de')->published(false)->save();
+
+        Facades\Stache::clear();
+
+        $response = $this->withHeaders([
+            'Accept-Language' => 'de_DE',
+        ])->get('/');
+
+        $response->assertSee('Home')->assertSessionMissing('locale_lander', 'completed');
+    }
+
+    /** @test */
     public function it_does_not_redirect_if_redirect_disabled()
     {
         Config::set('locale-lander.enable_redirection', false);

@@ -41,14 +41,19 @@ class LocaleHelper
 
     public function isCurrentLocaleCorrect(): bool
     {
-        return Site::current()->locale() === $this->browserLocale;
+        return $this->siteMatchesLocale(Site::current());
     }
 
     public function getMatchingSite(): ?\Statamic\Sites\Site
     {
         return Site::all()->first(function ($site) {
-            return $site->locale() === $this->browserLocale || $site->lang() === $this->browserLanguage;
+            return $this->siteMatchesLocale($site);
         });
+    }
+
+    public function siteMatchesLocale($site)
+    {
+        return $site->locale() === $this->browserLocale || $site->lang() === $this->browserLanguage;
     }
 
     public function findContentInLocale($site)
@@ -56,7 +61,9 @@ class LocaleHelper
         if ($data = Data::findByRequestUrl($this->request->url())) {
             if ($entry = Entry::find($data->id())) {
                 if ($content = $entry->in($site->handle())) {
-                    return $content;
+                    if ($this->isSafe($content)) {
+                        return $content;
+                    }
                 }
             }
         }
@@ -72,6 +79,13 @@ class LocaleHelper
     public function browserLanguage()
     {
         return $this->browserLanguage;
+    }
+
+    public function isSafe($content)
+    {
+        return $content->published()
+            && ! $content->private()
+            && $content->url();
     }
 
     public function setCompleted(): void
