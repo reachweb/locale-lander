@@ -98,6 +98,58 @@ class LocaleBannerTagTest extends TestCase
 
     }
 
+    /** @test */
+    public function the_tag_returns_false_if_locale_already_correct()
+    {
+        Config::set('locale-lander.enable_redirection', false);
+
+        $this->withFakeViews();
+
+        $this->viewShouldReturnRaw('layout', '{{ template_content }}');
+        $this->viewShouldReturnRaw('default', '{{ locale_banner }}{{ /locale_banner }}');
+
+        $this->createMultisiteEntries();
+
+        Facades\Stache::clear();
+
+        $response = $this->withHeaders([
+            'Accept-Language' => 'de_DE',
+        ])->get('/de');
+
+        $tag = $this->tag->index();
+
+        $this->assertIsArray($tag);
+        $this->assertArrayHasKey('entry', $tag);
+        $this->assertFalse($tag['entry']);
+
+    }
+
+    /** @test */
+    public function the_tag_returns_false_if_cookie_exists()
+    {
+        Config::set('locale-lander.enable_redirection', false);
+
+        $this->withFakeViews();
+
+        $this->viewShouldReturnRaw('layout', '{{ template_content }}');
+        $this->viewShouldReturnRaw('default', '{{ locale_banner }}{{ /locale_banner }}');
+
+        $this->createMultisiteEntries();
+
+        Facades\Stache::clear();
+
+        $response = $this->withCookie('locale_banner_closed', 'true')->withHeaders([
+            'Accept-Language' => 'de_DE',
+        ])->get('/gr');
+
+        $tag = $this->tag->index();
+
+        $this->assertIsArray($tag);
+        $this->assertArrayHasKey('entry', $tag);
+        $this->assertFalse($tag['entry']);
+
+    }
+
     private function setTagParameters($parameters)
     {
         $this->tag->setParameters($parameters);
