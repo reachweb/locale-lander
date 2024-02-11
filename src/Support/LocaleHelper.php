@@ -88,6 +88,14 @@ class LocaleHelper
             && $content->url();
     }
 
+    public function hasCookie(): bool
+    {
+        // Workaround because $request->hasCookie() is not working
+        $cookies = collect(request()->cookies->all());
+
+        return $cookies->has('locale_banner_closed');
+    }
+
     public function setCompleted(): void
     {
         session(['locale_lander' => 'completed']);

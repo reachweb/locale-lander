@@ -14,10 +14,21 @@ class ServiceProvider extends AddonServiceProvider
         ],
     ];
 
+    protected $tags = [
+        Tags\LocaleBanner::class,
+    ];
+
     public function register()
     {
         $this->app->singleton('localehelper', function ($app) {
             return new LocaleHelper();
         });
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'locale-lander');
+
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/locale-lander'),
+        ], 'locale-lander-views');
+
     }
 }

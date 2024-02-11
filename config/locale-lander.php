@@ -3,5 +3,4 @@
 return [
     'enable_redirection' => true,
 
-    'type' => 'redirect',
 ];
