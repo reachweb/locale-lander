@@ -1,3 +1,4 @@
+![locale_lander_bg](https://github.com/reachweb/locale-lander/assets/7423993/54aa2783-83d0-458e-a004-5660da3a4490)
 
 # Locale Lander
 
