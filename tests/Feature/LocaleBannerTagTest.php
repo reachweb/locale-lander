@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
 use Reach\LocaleLander\Tags\LocaleBanner;
 use Reach\LocaleLander\Tests\CreatesEntries;
 use Reach\LocaleLander\Tests\FakesViews;
@@ -38,6 +39,8 @@ class LocaleBannerTagTest extends TestCase
     /** @test */
     public function the_tag_returns_the_entry_if_locale_exists()
     {
+        Config::set('locale-lander.enable_redirection', false);
+
         $this->withFakeViews();
 
         $this->viewShouldReturnRaw('layout', '{{ template_content }}');
@@ -66,6 +69,32 @@ class LocaleBannerTagTest extends TestCase
         $this->assertInstanceOf(\Statamic\Fields\Value::class, $tag['entry']['url']);
         $this->assertEquals('/fr', $tag['entry']['url']->raw());
         $this->assertEquals('French', $tag['site']->name());
+
+    }
+
+    /** @test */
+    public function the_tag_returns_false_if_locale_does_not_exist()
+    {
+        Config::set('locale-lander.enable_redirection', false);
+
+        $this->withFakeViews();
+
+        $this->viewShouldReturnRaw('layout', '{{ template_content }}');
+        $this->viewShouldReturnRaw('default', '{{ locale_banner }}{{ /locale_banner }}');
+
+        $this->createMultisiteEntries();
+
+        Facades\Stache::clear();
+
+        $response = $this->withHeaders([
+            'Accept-Language' => 'de_DE',
+        ])->get('/about');
+
+        $tag = $this->tag->index();
+
+        $this->assertIsArray($tag);
+        $this->assertArrayHasKey('entry', $tag);
+        $this->assertFalse($tag['entry']);
 
     }
 
