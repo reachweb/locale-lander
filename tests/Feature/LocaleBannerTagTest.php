@@ -38,11 +38,35 @@ class LocaleBannerTagTest extends TestCase
     /** @test */
     public function the_tag_returns_the_entry_if_locale_exists()
     {
+        $this->withFakeViews();
+
+        $this->viewShouldReturnRaw('layout', '{{ template_content }}');
+        $this->viewShouldReturnRaw('default', '{{ locale_banner }}{{ /locale_banner }}');
+
         $this->createMultisiteEntries();
 
         Facades\Stache::clear();
 
-        ray($this->tag->index());
+        $response = $this->withHeaders([
+            'Accept-Language' => 'fr_FR',
+        ])->get('/');
+
+        $tag = $this->tag->index();
+
+        $this->assertIsArray($tag);
+        $this->assertArrayHasKey('entry', $tag);
+        $this->assertIsArray($tag['entry']);
+
+        $this->assertArrayHasKey('site', $tag);
+        $this->assertIsArray($tag['site']->toArray());
+
+        $this->assertArrayHasKey('title', $tag['entry']);
+        $this->assertArrayHasKey('url', $tag['entry']);
+
+        $this->assertInstanceOf(\Statamic\Fields\Value::class, $tag['entry']['url']);
+        $this->assertEquals('/fr', $tag['entry']['url']->raw());
+        $this->assertEquals('French', $tag['site']->name());
+
     }
 
     private function setTagParameters($parameters)
