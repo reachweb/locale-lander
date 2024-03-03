@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Artisan;
 use Reach\LocaleLander\Tests\CreatesEntries;
 use Reach\LocaleLander\Tests\FakesViews;
 use Reach\LocaleLander\Tests\PreventSavingStacheItemsToDisk;
@@ -17,6 +18,8 @@ class LocaleLanderTest extends TestCase
     {
         parent::setUp();
 
+        $this->withStandardFakeViews();
+
         $this->collection = Facades\Collection::make('pages')
             ->defaultPublishState('published')
             ->sites(['en', 'fr', 'de', 'gr'])
@@ -26,17 +29,18 @@ class LocaleLanderTest extends TestCase
                 'max_depth' => 1,
             ])
             ->save();
-    }
-
-    /** @test */
-    public function it_loads_homepage_for_each_language()
-    {
-        $this->withStandardFakeViews();
 
         $this->createMultisiteEntries();
 
         Facades\Stache::clear();
 
+        Artisan::call('cache:clear');
+        Artisan::call('route:clear');
+    }
+
+    /** @test */
+    public function it_loads_homepage_for_each_language()
+    {
         $this->get('/')->assertSee('Home');
         $this->get('/fr')->assertSee('Accueil');
         $this->get('/gr')->assertSee('Αρχική');
@@ -47,12 +51,6 @@ class LocaleLanderTest extends TestCase
     /** @test */
     public function it_loads_about_page_for_each_language()
     {
-        $this->withStandardFakeViews();
-
-        $this->createMultisiteEntries();
-
-        Facades\Stache::clear();
-
         $this->get('/about')->assertSee('About');
         $this->get('/fr/a-props')->assertSee('propos');
         $this->get('/gr/sxetika')->assertSee('Σχετικά');
@@ -62,12 +60,6 @@ class LocaleLanderTest extends TestCase
     /** @test */
     public function homepage_gets_redirected_to_the_right_language_if_content_exists()
     {
-        $this->withStandardFakeViews();
-
-        $this->createMultisiteEntries();
-
-        Facades\Stache::clear();
-
         $response = $this->withHeaders([
             'Accept-Language' => 'fr_FR',
         ])->get('/');
@@ -78,12 +70,6 @@ class LocaleLanderTest extends TestCase
     /** @test */
     public function about_page_gets_redirected_to_the_right_language_if_content_exists()
     {
-        $this->withStandardFakeViews();
-
-        $this->createMultisiteEntries();
-
-        Facades\Stache::clear();
-
         $response = $this->withHeaders([
             'Accept-Language' => 'el_GR',
         ])->get('/about');
@@ -94,13 +80,6 @@ class LocaleLanderTest extends TestCase
     /** @test */
     public function it_does_not_redirect_if_content_missing()
     {
-        $this->withoutExceptionHandling();
-        $this->withStandardFakeViews();
-
-        $this->createMultisiteEntries();
-
-        Facades\Stache::clear();
-
         $response = $this->withHeaders([
             'Accept-Language' => 'de_DE',
         ])->get('/about');
@@ -112,13 +91,8 @@ class LocaleLanderTest extends TestCase
     public function it_does_not_redirect_if_content_unpublished()
     {
         $this->withoutExceptionHandling();
-        $this->withStandardFakeViews();
-
-        $this->createMultisiteEntries();
 
         Facades\Entry::find('home')->in('de')->published(false)->save();
-
-        Facades\Stache::clear();
 
         $response = $this->withHeaders([
             'Accept-Language' => 'de_DE',
@@ -147,12 +121,6 @@ class LocaleLanderTest extends TestCase
     /** @test */
     public function it_does_not_redirect_if_already_did()
     {
-        $this->withStandardFakeViews();
-
-        $this->createMultisiteEntries();
-
-        Facades\Stache::clear();
-
         $response = $this->withHeaders([
             'Accept-Language' => 'el_GR',
         ])->get('/');
