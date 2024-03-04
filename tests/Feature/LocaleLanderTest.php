@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Reach\LocaleLander\Tests\CreatesEntries;
 use Reach\LocaleLander\Tests\FakesViews;
 use Reach\LocaleLander\Tests\PreventSavingStacheItemsToDisk;
@@ -105,9 +105,6 @@ class LocaleLanderTest extends TestCase
     public function it_does_not_redirect_if_redirect_disabled()
     {
         Config::set('locale-lander.enable_redirection', false);
-        $this->withStandardFakeViews();
-
-        $this->createMultisiteEntries();
 
         Facades\Stache::clear();
 
