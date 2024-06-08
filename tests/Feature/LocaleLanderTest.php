@@ -7,6 +7,7 @@ use Reach\LocaleLander\Tests\FakesViews;
 use Reach\LocaleLander\Tests\PreventSavingStacheItemsToDisk;
 use Reach\LocaleLander\Tests\TestCase;
 use Statamic\Facades;
+use PHPUnit\Framework\Attributes\Test;
 
 class LocaleLanderTest extends TestCase
 {
@@ -38,7 +39,7 @@ class LocaleLanderTest extends TestCase
         Artisan::call('route:clear');
     }
 
-    /** @test */
+    #[Test]
     public function it_loads_homepage_for_each_language()
     {
         $this->get('/')->assertSee('Home');
@@ -48,7 +49,7 @@ class LocaleLanderTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function it_loads_about_page_for_each_language()
     {
         $this->get('/about')->assertSee('About');
@@ -57,7 +58,7 @@ class LocaleLanderTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function homepage_gets_redirected_to_the_right_language_if_content_exists()
     {
         $response = $this->withHeaders([
@@ -67,7 +68,7 @@ class LocaleLanderTest extends TestCase
         $response->assertRedirect('/fr')->assertSessionHas('locale_lander', 'completed');
     }
 
-    /** @test */
+    #[Test]
     public function about_page_gets_redirected_to_the_right_language_if_content_exists()
     {
         $response = $this->withHeaders([
@@ -77,7 +78,7 @@ class LocaleLanderTest extends TestCase
         $response->assertRedirect('/gr/sxetika')->assertSessionHas('locale_lander', 'completed');
     }
 
-    /** @test */
+    #[Test]
     public function it_does_not_redirect_if_content_missing()
     {
         $response = $this->withHeaders([
@@ -87,7 +88,7 @@ class LocaleLanderTest extends TestCase
         $response->assertSee('About')->assertSessionMissing('locale_lander', 'completed');
     }
 
-    /** @test */
+    #[Test]
     public function it_does_not_redirect_if_content_unpublished()
     {
         $this->withoutExceptionHandling();
@@ -101,7 +102,7 @@ class LocaleLanderTest extends TestCase
         $response->assertSee('Home')->assertSessionMissing('locale_lander', 'completed');
     }
 
-    /** @test */
+    #[Test]
     public function it_does_not_redirect_if_redirect_disabled()
     {
         Config::set('locale-lander.enable_redirection', false);
@@ -115,7 +116,7 @@ class LocaleLanderTest extends TestCase
         $response->assertSee('Home')->assertSessionMissing('locale_lander', 'completed');
     }
 
-    /** @test */
+    #[Test]
     public function it_does_not_redirect_if_already_did()
     {
         $response = $this->withHeaders([

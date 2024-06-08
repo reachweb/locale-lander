@@ -8,6 +8,7 @@ use Reach\LocaleLander\Tests\PreventSavingStacheItemsToDisk;
 use Reach\LocaleLander\Tests\TestCase;
 use Statamic\Facades;
 use Statamic\Facades\Antlers;
+use PHPUnit\Framework\Attributes\Test;
 
 class LocaleBannerTagTest extends TestCase
 {
@@ -36,7 +37,7 @@ class LocaleBannerTagTest extends TestCase
             ->setContext([]);
     }
 
-    /** @test */
+    #[Test]
     public function the_tag_returns_the_entry_if_locale_exists()
     {
         Config::set('locale-lander.enable_redirection', false);
@@ -72,7 +73,7 @@ class LocaleBannerTagTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function the_tag_returns_false_if_locale_does_not_exist()
     {
         Config::set('locale-lander.enable_redirection', false);
@@ -98,7 +99,7 @@ class LocaleBannerTagTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function the_tag_returns_false_if_locale_already_correct()
     {
         Config::set('locale-lander.enable_redirection', false);
@@ -124,7 +125,7 @@ class LocaleBannerTagTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function the_tag_returns_false_if_cookie_exists()
     {
         Config::set('locale-lander.enable_redirection', false);
