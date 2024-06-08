@@ -3,9 +3,12 @@
 namespace Reach\LocaleLander\Tests;
 
 use Statamic\Extend\Manifest;
+use Statamic\Facades\Site;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
+    protected $fakeStacheDirectory = __DIR__.'/__fixtures__/dev-null';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -17,6 +20,29 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         if (isset($uses[PreventSavingStacheItemsToDisk::class])) {
             $this->preventSavingStacheItemsToDisk();
         }
+
+        Site::setSites([
+            'en' => [
+                'name' => 'English',
+                'url' => 'http://localhost/',
+                'locale' => 'en_US',
+            ],
+            'fr' => [
+                'name' => 'French',
+                'url' => 'http://localhost/fr',
+                'locale' => 'fr_FR',
+            ],
+            'de' => [
+                'name' => 'German',
+                'url' => 'http://localhost/de',
+                'locale' => 'de_DE',
+            ],
+            'gr' => [
+                'name' => 'Greek',
+                'url' => 'http://localhost/gr',
+                'locale' => 'el_GR',
+            ],
+        ]);
     }
 
     public function tearDown(): void
@@ -51,7 +77,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 
         $configs = [
             'assets', 'cp', 'forms', 'routes', 'static_caching',
-            'sites', 'stache', 'system', 'users',
+            'stache', 'system', 'users',
         ];
 
         foreach ($configs as $config) {
@@ -67,16 +93,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
                 'namespace' => 'Reach\\LocaleLander',
             ],
         ];
-        // We changed the default sites setup but the tests assume defaults like the following.
-        $app['config']->set('statamic.sites', [
-            'default' => 'en',
-            'sites' => [
-                'en' => ['name' => 'English', 'locale' => 'en_US', 'url' => 'http://localhost/'],
-                'fr' => ['name' => 'French', 'locale' => 'fr_FR', 'url' => 'http://localhost/fr'],
-                'de' => ['name' => 'German', 'locale' => 'de_DE', 'url' => 'http://localhost/de'],
-                'gr' => ['name' => 'Greek', 'locale' => 'el_GR', 'url' => 'http://localhost/gr'],
-            ],
-        ]);
+
         $app['config']->set('auth.providers.users.driver', 'statamic');
         $app['config']->set('statamic.stache.watcher', false);
         $app['config']->set('statamic.users.repository', 'file');

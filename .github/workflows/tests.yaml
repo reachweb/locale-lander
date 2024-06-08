@@ -14,12 +14,14 @@ jobs:
     strategy:
       matrix:
         php: [8.2, 8.3]
-        laravel: [10.*]
+        laravel: [10.*, 11.*]
         stability: [prefer-stable]
         os: [ubuntu-latest]
         include:
           - laravel: 10.*
             framework: ^10.0
+          - laravel: 11.*
+            framework: ^11.0
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -60,8 +62,13 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, :php-psr
           coverage: none
 
-      - name: Set PHP Testbench
+      - name: Set PHP 8.2 Testbench
         run: composer require "orchestra/testbench ^8.0" --no-interaction --no-update
+        if: matrix.laravel == '10.*' && matrix.php >= 8.2
+
+      - name: Set PHP 8.3 Testbench
+        run: composer require "orchestra/testbench ^9.0" --no-interaction --no-update
+        if: matrix.laravel == '11.*' && matrix.php >= 8.3
 
       - name: Install dependencies
         run: |
