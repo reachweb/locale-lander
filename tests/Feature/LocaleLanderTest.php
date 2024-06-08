@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 use Reach\LocaleLander\Tests\CreatesEntries;
 use Reach\LocaleLander\Tests\FakesViews;
 use Reach\LocaleLander\Tests\PreventSavingStacheItemsToDisk;
 use Reach\LocaleLander\Tests\TestCase;
 use Statamic\Facades;
-use PHPUnit\Framework\Attributes\Test;
 
 class LocaleLanderTest extends TestCase
 {
@@ -27,16 +26,10 @@ class LocaleLanderTest extends TestCase
             ->routes('{parent_uri}/{slug}')
             ->structureContents([
                 'root' => true,
-                'max_depth' => 1,
             ])
             ->save();
 
         $this->createMultisiteEntries();
-
-        Facades\Stache::clear();
-
-        Artisan::call('cache:clear');
-        Artisan::call('route:clear');
     }
 
     #[Test]
@@ -46,7 +39,6 @@ class LocaleLanderTest extends TestCase
         $this->get('/fr')->assertSee('Accueil');
         $this->get('/gr')->assertSee('Αρχική');
         $this->get('/de')->assertSee('Startseite');
-
     }
 
     #[Test]
@@ -55,7 +47,6 @@ class LocaleLanderTest extends TestCase
         $this->get('/about')->assertSee('About');
         $this->get('/fr/a-props')->assertSee('propos');
         $this->get('/gr/sxetika')->assertSee('Σχετικά');
-
     }
 
     #[Test]

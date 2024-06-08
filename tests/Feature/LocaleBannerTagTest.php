@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 use Reach\LocaleLander\Tags\LocaleBanner;
 use Reach\LocaleLander\Tests\CreatesEntries;
 use Reach\LocaleLander\Tests\FakesViews;
@@ -8,7 +9,6 @@ use Reach\LocaleLander\Tests\PreventSavingStacheItemsToDisk;
 use Reach\LocaleLander\Tests\TestCase;
 use Statamic\Facades;
 use Statamic\Facades\Antlers;
-use PHPUnit\Framework\Attributes\Test;
 
 class LocaleBannerTagTest extends TestCase
 {

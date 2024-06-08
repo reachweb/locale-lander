@@ -24,22 +24,22 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         Site::setSites([
             'en' => [
                 'name' => 'English',
-                'url' => 'http://localhost/',
+                'url' => '/',
                 'locale' => 'en_US',
             ],
             'fr' => [
                 'name' => 'French',
-                'url' => 'http://localhost/fr',
+                'url' => '/fr',
                 'locale' => 'fr_FR',
             ],
             'de' => [
                 'name' => 'German',
-                'url' => 'http://localhost/de',
+                'url' => '/de',
                 'locale' => 'de_DE',
             ],
             'gr' => [
                 'name' => 'Greek',
-                'url' => 'http://localhost/gr',
+                'url' => '/gr',
                 'locale' => 'el_GR',
             ],
         ]);
@@ -112,8 +112,10 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('statamic.stache.stores.asset-containers.directory', __DIR__.'/__fixtures__/content/assets');
         $app['config']->set('statamic.stache.stores.nav-trees.directory', __DIR__.'/__fixtures__/content/structures/navigation');
         $app['config']->set('statamic.stache.stores.collection-trees.directory', __DIR__.'/__fixtures__/content/structures/collections');
+        $app['config']->set('statamic.stache.stores.form-submissions.directory', __DIR__.'/__fixtures__/content/submissions');
 
         $app['config']->set('statamic.editions.pro', true);
+        $app['config']->set('statamic.system.multisite', true);
 
         $app['config']->set('cache.stores.outpost', [
             'driver' => 'file',

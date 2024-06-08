@@ -13,10 +13,10 @@ trait CreatesEntries
 
     public function createMultisiteEntries()
     {
-        $this->collection->structure()->makeTree('en')->save();
-        $this->collection->structure()->makeTree('fr')->save();
-        $this->collection->structure()->makeTree('gr')->save();
-        $this->collection->structure()->makeTree('de')->save();
+        $this->collection->structure()->makeTree('en', [])->save();
+        $this->collection->structure()->makeTree('fr', [])->save();
+        $this->collection->structure()->makeTree('gr', [])->save();
+        $this->collection->structure()->makeTree('de', [])->save();
 
         $home = $this->makeEntry('en', $this->collection, 'home')->set('content', 'Home');
         $homeFr = $home->makeLocalization('fr')->set('content', 'Accueil');
@@ -36,32 +36,36 @@ trait CreatesEntries
         $aboutFr->save();
         $aboutGr->save();
 
-        $this->collection->structure()->in('en')->tree(
-            [
-                ['entry' => 'home'],
-                ['entry' => 'about'],
-            ]
-        )->save();
+        $structure = $this->collection->structure();
 
-        $this->collection->structure()->in('fr')->tree(
-            [
-                ['entry' => $homeFr->id()],
-                ['entry' => $aboutFr->id()],
-            ]
-        )->save();
+        $treeEn = [
+            ['entry' => $home->id()],
+            ['entry' => $about->id()],
+        ];
 
-        $this->collection->structure()->in('gr')->tree(
-            [
-                ['entry' => $homeGr->id()],
-                ['entry' => $aboutGr->id()],
-            ]
-        )->save();
+        $treeFr = [
+            ['entry' => $homeFr->id()],
+            ['entry' => $aboutFr->id()],
+        ];
 
-        $this->collection->structure()->in('de')->tree(
-            [
-                ['entry' => $homeDe->id()],
-            ]
-        )->save();
+        $treeGr = [
+            ['entry' => $homeGr->id()],
+            ['entry' => $aboutGr->id()],
+        ];
+
+        $treeDe = [
+            ['entry' => $homeDe->id()],
+        ];
+
+        $contentEn = $structure->validateTree($treeEn, 'en');
+        $contentFr = $structure->validateTree($treeFr, 'fr');
+        $contentGr = $structure->validateTree($treeGr, 'gr');
+        $contentDe = $structure->validateTree($treeDe, 'de');
+
+        $structure->in('en')->tree($contentEn)->save();
+        $structure->in('fr')->tree($contentFr)->save();
+        $structure->in('gr')->tree($contentGr)->save();
+        $structure->in('de')->tree($contentDe)->save();
 
     }
 }
