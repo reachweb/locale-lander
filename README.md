@@ -14,7 +14,11 @@ composer require reachweb/locale-lander
 
 ## How to Use (Redirection)
 
-To use the redirection feature, no additional configuration is needed after installation. The addon should function right out of the box.
+To use the redirection feature, no additional configuration is needed after installation. The addon should function right out of the box. However, you can limit redirection to non-homepage URLs by publishing the configuration file (see next step) and setting the following line:
+
+```php
+'redirect_only_homepage' => true,
+```
 
 ## How to Use (Banner)
 
