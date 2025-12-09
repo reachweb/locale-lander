@@ -22,6 +22,10 @@ class HandleLocaleRedirection
             return $next($request);
         }
 
+        if ($this->shouldRedirectOnlyHomepage() && !$helper->isCurrentSiteHomepage()) {
+            return $next($request);
+        }
+
         $site = $helper->getMatchingSite();
         if (! $site) {
             return $next($request);
@@ -40,5 +44,10 @@ class HandleLocaleRedirection
     private function shouldSkip(): bool
     {
         return config('locale-lander.enable_redirection') === false || session('locale_lander') === 'completed';
+    }
+
+    private function shouldRedirectOnlyHomepage(): bool
+    {
+        return true === config('locale-lander.redirect_only_homepage');
     }
 }
