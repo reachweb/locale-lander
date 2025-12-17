@@ -22,7 +22,7 @@ class HandleLocaleRedirection
             return $next($request);
         }
 
-        if ($this->shouldRedirectOnlyHomepage() && !$helper->isCurrentSiteHomepage()) {
+        if ($this->shouldRedirectOnlyHomepage() && ! $helper->isCurrentSiteHomepage()) {
             return $next($request);
         }
 
@@ -48,6 +48,6 @@ class HandleLocaleRedirection
 
     private function shouldRedirectOnlyHomepage(): bool
     {
-        return true === config('locale-lander.redirect_only_homepage');
+        return config('locale-lander.redirect_only_homepage') === true;
     }
 }

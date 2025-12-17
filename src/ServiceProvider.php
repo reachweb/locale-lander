@@ -21,7 +21,7 @@ class ServiceProvider extends AddonServiceProvider
     public function register()
     {
         $this->app->singleton('localehelper', function ($app) {
-            return new LocaleHelper();
+            return new LocaleHelper;
         });
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'locale-lander');
