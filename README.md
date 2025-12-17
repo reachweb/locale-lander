@@ -14,7 +14,7 @@ composer require reachweb/locale-lander
 
 ## How to Use (Redirection)
 
-To use the redirection feature, no additional configuration is needed after installation. The addon should function right out of the box.
+To use the redirection feature, no additional configuration is needed after installation. The addon should function right out of the box. 
 
 ## How to Use (Banner)
 
@@ -55,6 +55,23 @@ php artisan vendor:publish --tag=locale-lander-views
 and you should be good to go. If you are not using Tailwind CSS, you will need to style it yourself.
 
 In case you want to implement your own version, note that you should set a cookie named `locale_banner_closed` to prevent showing the banner to users who have closed it.
+
+## Limiting redirection to the homepage only
+
+You can limit redirection so that it only applies in the homepage. 
+
+To do so, first if you haven't already done so, publish the config:
+
+
+```bash
+php artisan vendor:publish --tag=locale-lander-config
+```
+
+then in `config/locale-lander.php` enable `redirect_only_homepage`:
+
+```php
+'redirect_only_homepage' => true,
+```
 
 ## How it Works
 

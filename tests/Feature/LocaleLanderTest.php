@@ -14,7 +14,7 @@ class LocaleLanderTest extends TestCase
 
     public $collection;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -121,5 +121,29 @@ class LocaleLanderTest extends TestCase
         ])->get('/');
 
         $response->assertSee('Home')->assertSessionHas('locale_lander', 'completed');
+    }
+
+    #[Test]
+    public function homepage_gets_redirected_to_the_right_language_if_homepage_filter_enabled()
+    {
+        Config::set('locale-lander.redirect_only_homepage', true);
+
+        $response = $this->withHeaders([
+            'Accept-Language' => 'fr_FR',
+        ])->get('/');
+
+        $response->assertRedirect('/fr')->assertSessionHas('locale_lander', 'completed');
+    }
+
+    #[Test]
+    public function about_page_gets_not_redirected_if_homepage_filter_enabled()
+    {
+        Config::set('locale-lander.redirect_only_homepage', true);
+
+        $response = $this->withHeaders([
+            'Accept-Language' => 'fr_FR',
+        ])->get('/about');
+
+        $response->assertSee('About')->assertSessionMissing('locale_lander', 'completed');
     }
 }

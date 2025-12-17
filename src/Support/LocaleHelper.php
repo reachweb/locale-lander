@@ -44,6 +44,11 @@ class LocaleHelper
         return $this->siteMatchesLocale(Site::current());
     }
 
+    public function isCurrentSiteHomepage(): bool
+    {
+        return Site::current()->absoluteUrl() == $this->request->url();
+    }
+
     public function getMatchingSite(): ?\Statamic\Sites\Site
     {
         return Site::all()->first(function ($site) {

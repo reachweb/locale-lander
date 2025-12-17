@@ -18,7 +18,7 @@ class LocaleBannerTagTest extends TestCase
 
     public $tag;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
