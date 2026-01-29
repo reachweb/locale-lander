@@ -47,8 +47,8 @@
     },
     "require": {
         "php": "^8.2",
-        "statamic/cms": "^5.0.0",
-        "symfony/intl": "^6.4 || ^7.0"
+        "statamic/cms": "^5.0 | ^6.0",
+        "symfony/intl": "^6.4 | ^7.0"
     },
     "config": {
         "allow-plugins": {
